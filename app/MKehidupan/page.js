@@ -15,26 +15,45 @@ const quicksand = Quicksand({
 
 function Page() {
   const router = useRouter();
+  const soundClick = new Audio("/suara.wav");
+
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  const gainNode = audioContext.createGain();
+  gainNode.gain.setValueAtTime(2, audioContext.currentTime);
+
+  const playSoundAndNavigate = (navigateFunction) => {
+    soundClick
+      .play()
+      .then(() => {
+        const audioSource = audioContext.createMediaElementSource(soundClick);
+        audioSource.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        navigateFunction();
+      })
+      .catch(() => {
+        navigateFunction();
+      });
+  };
 
   const handleBack = () => {
-    router.back();
+    playSoundAndNavigate(() => router.back());
   };
 
   const handleNavArtikel1 = () => {
-    router.push("MKehidupan/Artikel1");
+    playSoundAndNavigate(() => router.push("MKehidupan/Artikel1"));
   };
   const handleNavArtikel2 = () => {
-    router.push("MKehidupan/Artikel2");
+    playSoundAndNavigate(() => router.push("MKehidupan/Artikel2"));
   };
   const handleNavArtikel3 = () => {
-    router.push("MKehidupan/Artikel3");
+    playSoundAndNavigate(() => router.push("MKehidupan/Artikel3"));
   };
 
   const handleNavCerita1 = () => {
-    router.push("MKehidupan/Cerita1");
+    playSoundAndNavigate(() => router.push("MKehidupan/Cerita1"));
   };
   const handleNavCerita2 = () => {
-    router.push("MKehidupan/Cerita2");
+    playSoundAndNavigate(() => router.push("MKehidupan/Cerita2"));
   };
 
   return (
@@ -51,7 +70,7 @@ function Page() {
       <div className="w-full h-full justify-center items-center">
         <div className="w-full flex items-center text-start self-start p-4">
           <FaArrowAltCircleLeft
-            onClick={handleBack}
+            onClick={() => playSoundAndNavigate(handleBack)}
             className="cursor-pointer mx-3 hover:scale-110 transition duration-300"
             color="black"
             style={{ fontSize: "3rem" }}
@@ -84,7 +103,7 @@ function Page() {
               </Typography>
               <div className="w-[81%]">
                 <Typography
-                  onClick={handleNavArtikel1}
+                  onClick={() => playSoundAndNavigate(handleNavArtikel1)}
                   className={`text-blue-800 bg-gray-300 rounded-lg text-2xl underline cursor-pointer hover:text-blue-400 transition duration-300 ease-in-out mb-2 ${quicksand.className}`}
                 >
                   Menemukan Kebahagiaan dalam Kesederhanaan
@@ -92,7 +111,7 @@ function Page() {
               </div>
               <div className="w-[74%]">
                 <Typography
-                  onClick={handleNavArtikel2}
+                  onClick={() => playSoundAndNavigate(handleNavArtikel2)}
                   className={`text-blue-800 bg-gray-300 rounded-lg text-2xl underline cursor-pointer hover:text-blue-400 transition duration-300 ease-in-out mb-2 ${quicksand.className}`}
                 >
                   Perubahan Kecil untuk Hidup Lebih Bermakna
@@ -100,7 +119,7 @@ function Page() {
               </div>
               <div className="w-[86%]">
                 <Typography
-                  onClick={handleNavArtikel3}
+                  onClick={() => playSoundAndNavigate(handleNavArtikel3)}
                   className={`text-blue-800 text-2xl bg-gray-300 rounded-lg underline cursor-pointer hover:text-blue-400 transition duration-300 ease-in-out mb-5 ${quicksand.className}`}
                 >
                   Menghadapi Tantangan Hidup dengan Kepala Tegak: Kekuatan dalam
@@ -114,7 +133,7 @@ function Page() {
               </Typography>
               <div className="w-[76%]">
                 <Typography
-                  onClick={handleNavCerita1}
+                  onClick={() => playSoundAndNavigate(handleNavCerita1)}
                   className={`text-blue-800 text-2xl bg-gray-300 rounded-lg hover:undereline underline cursor-pointer hover:text-blue-400 transition duration-300 ease-in-out mb-2 ${quicksand.className}`}
                 >
                   Pelangi Setelah Hujan: Kisah Perjuangan Hidup
@@ -122,7 +141,7 @@ function Page() {
               </div>
               <div className="w-[96%]">
                 <Typography
-                  onClick={handleNavCerita2}
+                  onClick={() => playSoundAndNavigate(handleNavCerita2)}
                   className={`text-blue-800 text-2xl bg-gray-300 rounded-lg hover:undereline underline cursor-pointer hover:text-blue-400 transition duration-300 ease-in-out  ${quicksand.className}`}
                 >
                   Kekuatan dalam Keterbatasan: Perjalanan Seorang Wanita yang

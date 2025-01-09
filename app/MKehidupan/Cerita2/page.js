@@ -72,19 +72,42 @@ const articles = [
 
 function ArtikelPage() {
   const router = useRouter();
+  const soundClick = new Audio("/suara.wav");
+
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  const gainNode = audioContext.createGain();
+  gainNode.gain.setValueAtTime(2, audioContext.currentTime);
+
+  const playSoundAndNavigate = (navigateFunction) => {
+    soundClick
+      .play()
+      .then(() => {
+        const audioSource = audioContext.createMediaElementSource(soundClick);
+        audioSource.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        navigateFunction();
+      })
+      .catch(() => {
+        navigateFunction();
+      });
+  };
 
   const handleBack = () => {
-    router.back();
+    playSoundAndNavigate(() => router.back());
   };
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleNextArtikel = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % articles.length);
+    playSoundAndNavigate(() =>
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % articles.length)
+    );
   };
 
   const handlePrevArtikel = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? articles.length - 1 : prevIndex - 1
+    playSoundAndNavigate(() =>
+      setCurrentIndex((prevIndex) =>
+        prevIndex === 0 ? articles.length - 1 : prevIndex - 1
+      )
     );
   };
 
@@ -166,20 +189,20 @@ function ArtikelPage() {
 
         <div className="flex w-full justify-center items-center gap-2 mt-5 fixed bottom-8">
           <AiOutlineDoubleLeft
-            onClick={handlePrevArtikel}
+            onClick={() => playSoundAndNavigate(handlePrevArtikel)}
             className={`${
               currentIndex === 0 ? "hidden" : "block"
             } hover:scale-110 text-black p-1 hover:bg-gray-700 hover:text-orange-900 rounded-full transition duration-300 ease-in-out cursor-pointer`}
             size={35}
           />
           <Button
-            onClick={handleBack}
+            onClick={() => playSoundAndNavigate(handleBack)}
             className={`w-[15%] rounded-full border-2 border-orange-900 bg-orange-900 normal-case text-md hover:border-2 hover:border-white hover:scale-110 transition duration-500 ease-in-out ${quicksand.className}`}
           >
             Kembali
           </Button>
           <AiOutlineDoubleRight
-            onClick={handleNextArtikel}
+            onClick={() => playSoundAndNavigate(handleNextArtikel)}
             className={`${
               currentIndex === articles.length - 1 ? "hidden" : "block"
             } hover:scale-110 text-black p-1 hover:bg-gray-700 hover:text-orange-900 rounded-full transition duration-300 ease-in-out cursor-pointer`}

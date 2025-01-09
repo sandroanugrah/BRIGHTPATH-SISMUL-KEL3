@@ -15,26 +15,45 @@ const quicksand = Quicksand({
 
 function Page() {
   const router = useRouter();
+  const soundClick = new Audio("/suara.wav");
+
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  const gainNode = audioContext.createGain();
+  gainNode.gain.setValueAtTime(2, audioContext.currentTime);
+
+  const playSoundAndNavigate = (navigateFunction) => {
+    soundClick
+      .play()
+      .then(() => {
+        const audioSource = audioContext.createMediaElementSource(soundClick);
+        audioSource.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        navigateFunction();
+      })
+      .catch(() => {
+        navigateFunction();
+      });
+  };
 
   const handleBack = () => {
-    router.back();
+    playSoundAndNavigate(() => router.back());
   };
 
   const handleNavArtikel1 = () => {
-    router.push("MBisnis/Artikel1");
+    playSoundAndNavigate(() => router.push("MBisnis/Artikel1"));
   };
   const handleNavArtikel2 = () => {
-    router.push("MBisnis/Artikel2");
+    playSoundAndNavigate(() => router.push("MBisnis/Artikel2"));
   };
   const handleNavArtikel3 = () => {
-    router.push("MBisnis/Artikel3");
+    playSoundAndNavigate(() => router.push("MBisnis/Artikel3"));
   };
 
   const handleNavCerita1 = () => {
-    router.push("MBisnis/Cerita1");
+    playSoundAndNavigate(() => router.push("MBisnis/Cerita1"));
   };
   const handleNavCerita2 = () => {
-    router.push("MBisnis/Cerita2");
+    playSoundAndNavigate(() => router.push("MBisnis/Cerita2"));
   };
 
   return (
@@ -51,7 +70,7 @@ function Page() {
       <div className="w-full h-full justify-center items-center">
         <div className="w-full flex items-center text-start self-start p-4">
           <FaArrowAltCircleLeft
-            onClick={handleBack}
+            onClick={() => playSoundAndNavigate(handleBack)}
             className="cursor-pointer mx-3 hover:scale-110 transition duration-300 ease-in-out"
             color="black"
             style={{ fontSize: "3rem" }}
@@ -83,7 +102,7 @@ function Page() {
               </Typography>
               <div className="w-[95%]">
                 <Typography
-                  onClick={handleNavArtikel1}
+                  onClick={() => playSoundAndNavigate(handleNavArtikel1)}
                   className={`text-blue-800 bg-gray-300 rounded-lg text-2xl underline cursor-pointer hover:text-blue-400 transition duration-300 ease-in-out mb-2 ${quicksand.className}`}
                 >
                   Meraih Sukses Bisnis dari Nol: Cara Memulai dengan Penuh
@@ -92,7 +111,7 @@ function Page() {
               </div>
               <div className="w-[40%]">
                 <Typography
-                  onClick={handleNavArtikel2}
+                  onClick={() => playSoundAndNavigate(handleNavArtikel2)}
                   className={`text-blue-800 bg-gray-300 rounded-lg text-2xl underline cursor-pointer hover:text-blue-400 transition duration-300 ease-in-out mb-2 ${quicksand.className}`}
                 >
                   Bangkit dari Kegagalan
@@ -100,7 +119,7 @@ function Page() {
               </div>
               <div className="w-[98%]">
                 <Typography
-                  onClick={handleNavArtikel3}
+                  onClick={() => playSoundAndNavigate(handleNavArtikel3)}
                   className={`text-blue-800 text-2xl bg-gray-300 rounded-lg underline cursor-pointer hover:text-blue-400 transition duration-300 ease-in-out mb-5 ${quicksand.className}`}
                 >
                   Mengubah Gagal Menjadi Kesuksesan: Pelajaran Berharga dari
@@ -114,7 +133,7 @@ function Page() {
               </Typography>
               <div className="w-[97%]">
                 <Typography
-                  onClick={handleNavCerita1}
+                  onClick={() => playSoundAndNavigate(handleNavCerita1)}
                   className={`text-blue-800 text-2xl bg-gray-300 rounded-lg underline cursor-pointer hover:text-blue-400 transition duration-300 ease-in-out mb-2 ${quicksand.className}`}
                 >
                   Dari Garasi ke Puncak: Perjalanan Seorang Pengusaha Muda
@@ -122,7 +141,7 @@ function Page() {
               </div>
               <div className="w-[100%]">
                 <Typography
-                  onClick={handleNavCerita2}
+                  onClick={() => playSoundAndNavigate(handleNavCerita2)}
                   className={`text-blue-800 text-2xl bg-gray-300 rounded-lg underline cursor-pointer hover:text-blue-400 transition duration-300 ease-in-out  ${quicksand.className}`}
                 >
                   Langkah Kecil Menuju Impian Besar: Kisah Seorang Mahasiswa
